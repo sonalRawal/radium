@@ -84,8 +84,8 @@ router.get('/films/:filmId', function (req, res) {
        name:"Finding Demo"
        }]
    let  myId =  req.params.filmId
-   let  filmlist = people[myId]
-   if(myId<people.length){
+   let  filmlist = people[myId-1]
+   if(myId<=people.length){
        res.send(filmlist)
    }else{
        res.send("invalid id")
