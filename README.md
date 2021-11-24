@@ -1,40 +1,49 @@
 # radium
 Repository for backend cohort - Radium
-TOPIC: Middleware2
+// assignment problem
 
-- For this assignment you have to create a new branch - assignment/middleware2
-- Your user document should look like this
- 	{ 
-_id: ObjectId("61951bfa4d9fe0d34da86829"),
-name: "Sabiha Khan",
-	balance:100, // Default balance at user registration is 100
-	address:"New delhi",
-	age: 90,
- 	gender: “female” // Allowed values are - “male”, “female”, “other”
-	freeAppUser: false // Default false value
-	}
-- Your product document should look like this
-{
-	_id: ObjectId("61951bfa4d9fe0d34da86344"),
-	name:"Catcher in the Rye",
-	category:"book",
-	price:70 //mandatory property
-}
-Your Order document looks like this.
-{
-	_id: ObjectId("61951bfa4d9fe0d34da86344"),
-userId: “61951bfa4d9fe0d34da86829”,
-productId: “61951bfa4d9fe0d34da86344”
-amount: 0,
-isFreeAppUser: true, 
-date: “22/11/2021”
-}
+POST /users (Public API)
+Register a user
+The details of a user are name(mandatory and unqiue), mobile(mandatory), email(mandatory), password(mandatory) and a isDeleted flag with a default false value
+POST /login (Public API)
+Validate credentials of the user. The credentials of a user are their name and their password. You will receive these in the request body. The credentials are valid if there exists a user with the combination of credentials. Return a true status in response body. You also have to ensure the user is valid (not deleted) . Additionally, if a valid user is found you have to create a Json Web Token using the package called 'jsonwebtoken'. The response structure for this api should be like this. Use any string as the secret. In the payload of the token provide the userId. Payload example - {userId: "619cccc58d8f480db6050233"}. Secret example - 'radium'
+NOTE:
 
-NOTE: In some of the below apis a header validation is to be performed (create user and create order). The name of the header is ‘isFreeApp’. Write a header validation that simply checks whether this header is present or not. Please note this validation should only be called in create user and create order apis.
-1. Write a POST api to create a product from the product details in request body.
-2.  Write a POST api to create a user that takes user details from the request body. If the header isFreeApp is not present terminate the request response cycle with an error message that the request is missing a mandatory header
-3. Write a POST api for order purchase that takes a userId and a productId in request body. 
-4. Update the logic in middleware to set the isFreeAppUser attribute in req. Use this attribute in the route handler for populating the isFreeAppUser attributes of User and Order collection.
-If the header isFreeApp is not present terminate the request response cycle with an error message that the request is missing a mandatory header
-If the header is present the control goes to the request handler. Perform the user and product validation. Check if the user exists as well as whether the product exists. Return an error with a suitable error message if either of these validations fail
-For every purchase we save an order document in the orders collection. If the isFreeApp header is true then the balance of the user is not deducted and the amount in order is set to 0 as well the flag isFreeAppUser is set to true. If this header has a false value then the product’s price is checked. This value is deducted from the user’s balance and the order amount is set to the product’s price as well as the flag isFreeAppUser is set to false in order document.
+The following apis must contain a request header 'x-auth-token' containing the token returned from a successful login request
+The following apis must have a validation where the request header 'x-auth-token' must be present and it should be a valid token. If this validation fails, terminate the request response cycle and return an error message accordingly. (Both the cases when a token is not present as well as when the token is not succesfully decoded)
+GET /users/:userId (Protected API - token validation)
+return the user's details if found else return a response with an error message having a structure like this
++ Add an additional check to ensure that api is requesting the details of the logged-in user only. ( Hint : You have to compare the userId in the token with the userId in the path parameter )
+PUT /users/:userId (Protected API - token validation
+Update a user's email recieved in the request body. Before actually updating the details ensure that the userId recieved is valid which means a valid user with this id must exist, else return a response with an error message with a structure like this
++ Add an additional check to ensure that api is requesting to update the details of the logged-in user only. ( Hint : You have to compare th
+
+Login Response structure
+{
+  status: true,
+  data: {
+    userId: "619cccc58d8f480db6050233"
+  },
+  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MTljY2NjNThkOGY0ODBkYjYwNTAyMzMiLCJpYXQiOjE2Mzc2NjY3NTl9.MgI-kKr8CXepycqeYF8twlSrVJ-63C76q1kHSGd_iew"
+}
+Successful Response structure
+{
+  status: true,
+  data: {
+
+  }
+}
+Error Response structure
+{
+  status: false,
+  msg: ""
+}
+Collections
+Users
+{
+    "name" : "Sabiha",
+    "mobile" : 9999999999,
+    "email" : "s@gmail.com",
+    "password" : "123",
+    "isDeleted" : false,
+}
