@@ -10,9 +10,12 @@ const authenticate = function (req, res, next) {
     else {
       let decodedToken = jwt.verify(authToken, "radium-secret");
       if (decodedToken) {
-        req.user=decodedToken
+
+        req.user = decodedToken
+        
         console.log("Token:- ",decodedToken)
         next();
+
       } else {
         res.status(401).send({ status: false, message: "The authentication token is invalid" });
       }
