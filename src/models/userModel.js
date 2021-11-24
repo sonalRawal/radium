@@ -2,14 +2,11 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: String,
-    balance: { type: Number, default: 100 },
-    address: String,
-    password: String,
-    isDeleted: {type: Boolean, default: false},
-    age: Number,
-    gender: { type: String, enum: ["male", "female", "other"] },
-    freeAppUser: { type: Boolean, default: false },
+    name: { type: String, unique: true, required: true },
+    mobile: { type: Number, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

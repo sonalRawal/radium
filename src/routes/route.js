@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController')
-const productController = require('../controllers/productController')
-const orderController = require('../controllers/orderController')
-const appMiddleware = require('../middlewares/appMiddleware')
+const authMiddleware = require('../middlewares/authMiddleware')
 
-router.post('/users', appMiddleware.validateAppType, userController.createUser);
-//For JWT session
-router.get('/users/:userId', userController.getDetails)
-//For JWT session
+//Public apis : no authentication is required because these requests are sent when a user isn't logged in yet
+router.post('/users', userController.createUser);
 router.post('/login', userController.login)
-router.post('/products', productController.createProduct);
-router.post('/orders', appMiddleware.validateAppType, orderController.createOrder);
 
+//Restricted apis : must be authenticated(check if the request is sent for a logged-in user) before the apis are allowed to be accessed
+router.get('/users/:userId', authMiddleware.authenticate, userController.getDetails)
+router.put('/users/:userId', authMiddleware.authenticate, userController.updateUser)
 
 module.exports = router;
