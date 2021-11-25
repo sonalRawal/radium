@@ -56,7 +56,7 @@ const getByPin = async function (req, res){
 
         let options = {
           method : "get",
-          url : `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=${pin}&date=${date}`
+          url : 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=${pin}&date=${date}'
         }
         let response= await axios(options)
         
