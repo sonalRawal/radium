@@ -10,9 +10,9 @@ const blogController= require("../controllers/blogController")
 router.post('/authors',  authorController.createAuthor);
  router.post('/blogs',   blogController.createBlogs);
  router.get('/blogs',   blogController.getBlogs);
- router.put('/blogs/:blogId',  blogController.updateBlog);
- router.get('/blogs/:blogId',  blogController.checkdeletestatus);
- router.get('/blogs1',  blogController.deletebyparams);
+  router.put('/blogs/:blogId',  blogController.updateBlog);
+  router.get('/blogs/:blogId',  blogController.checkdeletestatus);
+  router.get('/deletedBlogs',  blogController.deletebyparams);
  
 
 module.exports = router;
