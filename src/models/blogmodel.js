@@ -13,13 +13,13 @@ const blogsSchema = new mongoose.Schema({
     
     subcategory :[String],
 
-    deletedAt : {type: Date, default: Date.now},
+    deletedAt : {type: Date, default:null},
     
     isDeleted:{type:Boolean, default:false},
     
     isPublished:{type:Boolean, default:false},
 
-    publishedAt:{type: Date, default: Date.now}
+    publishedAt:{type: Date, default: null}
     
     },{timestamps : true })
 
