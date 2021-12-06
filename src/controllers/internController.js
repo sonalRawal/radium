@@ -2,16 +2,6 @@ const { isValid, isValidRequestBody } = require("./collegeController")
 const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel");
 
-// const isValid = function (value) {
-//   if (typeof value === "undefined" || value === null) return false;
-//   if (typeof value === "string" && value.trim().length === 0) return false;
-//   return true;
-// };
-
-// const isValidRequestBody = function (requestbody) {
-//   return Object.keys(requestbody).length > 0;
-// };
-
 
 //---------------------------------------------------------------------------------------
 
@@ -72,8 +62,8 @@ const createInterns = async function (req, res) {
     }
 
 
-    if (!/^[0-9]\d{9}$/gi.test(mobile)) {
-    //if (!/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(mobile)) {
+    // if (!/^[0-9]\d{9}$/gi.test(mobile)) {
+    if (!/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(mobile)) {
     //if (!/^\+(?:[0-9] ?){10,12}[0-9]$/.test(mobile)) {
       res.status(400).send({
         status: false,

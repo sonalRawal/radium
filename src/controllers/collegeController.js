@@ -12,6 +12,12 @@ const isValid = function (value) {
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
 }
+
+// const createUrl = function(name){
+//     let url = "https://functionup.s3.ap-south-1.amazonaws.com/colleges/"
+//     let modifyUrl = `${url}${name}.png`
+//     return modifyUrl
+// }
 //!--------------------------------------------------------------------//
 
 const registerCollege = async function (req, res) {
@@ -21,8 +27,9 @@ const registerCollege = async function (req, res) {
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide college details' })
 
         }
+        
         // Extract body
-        const { name, fullName, logoLink, isDeleted } = requestBody
+        const { name, fullName,logoLink, isDeleted } = requestBody
 
         // valid Body
         if (!isValid(name)) {
@@ -48,16 +55,17 @@ const registerCollege = async function (req, res) {
         const isNameAlreadyRegister = await collegeModel.findOne({ name })
         //console.log(isNameAlreadyRegister)
         if (isNameAlreadyRegister) {
-            return res.status(400).send({ status: false, message: `${name}Name already Register` })
+            return res.status(400).send({ status: false, message: `${name} Name already registered` })
         }
 
         //  const isFullNameAlreadyRegister = await collegeModel.findOne({fullName})
         //  if (isFullNameAlreadyRegister){
         //      return res.status(400).send({status:false, message:`${fullName}FullName already Register`})
         //  }
-
+        // requestBody['logoLink'] = createUrl(name)
         let data = await collegeModel.create(requestBody)
-        return res.status(200).send({ status: true, message: data })
+        let collegeResponse = await collegeModel.findOne(data).select({name:1,fullName:1,logoLink:1,isDeleted:1})
+        return res.status(200).send({ status: true, message: collegeResponse })
     } catch (error) {
         console.log(error);
         return res.status(500).send({ status: false, message: error.message });
@@ -83,7 +91,7 @@ const getCollegeDetails = async function (req, res) {
         // if (isValid(name1)) {
         //     filterQuery['name'] = name1
         // }
-
+        
 
         const name1 = req.query.collegeName
         if (!isValid(name1))
