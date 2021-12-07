@@ -109,7 +109,7 @@ const getCollegeDetails = async function (req, res) {
         }
         //const interns = await internModel.find({ collegeId: college._id }).select({ isDeleted: 0, collegeId: 0, createdAt: 0, updatedAt: 0, __v: 0 })
         //In place of .select() you can write directly like this
-        const interns = await internModel.find({ collegeId: college._id }, { name: 1, email: 1, mobile: 1 })
+        const interns = await internModel.find({ collegeId: college._id, isDeleted: false}, { name: 1, email: 1, mobile: 1 })
 
 
 

@@ -28,13 +28,13 @@ const createInterns = async function (req, res) {
       res.status(400).send({ status: false, msg: "Intern name is required" });
       return;
     }
-    if (!isValid(email)) {
+    if (!isValid(email.trim())) {
       return res
         .status(400)
         .send({ status: false, message: "Intern email required" });
     }
 
-    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email.trim())) {
       res
         .status(400)
         .send({
@@ -56,14 +56,14 @@ const createInterns = async function (req, res) {
     }
 
 
-    if (!isValid(mobile)) {
+    if (!isValid(mobile.trim())) {
       res.status(400).send({ status: false, msg: "Mobile Number is required" });
       return;
     }
 
 
     // if (!/^[0-9]\d{9}$/gi.test(mobile)) {
-    if (!/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(mobile)) {
+    if (!/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(mobile.trim())) {
     //if (!/^\+(?:[0-9] ?){10,12}[0-9]$/.test(mobile)) {
       res.status(400).send({
         status: false,
