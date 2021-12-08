@@ -113,7 +113,7 @@ const createInterns = async function (req, res) {
 
     const newIntern = await internModel.create(updatedBody)
     const updateResponse = await internModel.findOne(newIntern).select({ createdAt: 0, updatedAt: 0, __v: 0, _id: 0 })
-    res.status(201).send({
+    res.status(200).send({
       status: true, msg: "New Intern created successfully", data: updateResponse
     });
 
