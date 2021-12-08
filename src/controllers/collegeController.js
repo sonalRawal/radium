@@ -50,7 +50,13 @@ const registerCollege = async function (req, res) {
                 .send({ status: false, msg: "Cannot input isDeleted as true while registering" });
             return;
         }
-
+        
+        const collegeval = name.split(" ");
+        const len = collegeval.length       
+        if (len > 1) {
+            return res.status(400).send({ status: false, msg: "Abbreviated college name should be in a single word" });
+        }
+        
         //valid Name
         const isNameAlreadyRegister = await collegeModel.findOne({ name })
         //console.log(isNameAlreadyRegister)
