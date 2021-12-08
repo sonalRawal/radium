@@ -51,7 +51,8 @@ const registerCollege = async function (req, res) {
             return;
         }
         
-        const collegeval = name.split(" ");
+        const nameTrim = name.trim()
+        const collegeval = nameTrim.split(" ");
         const len = collegeval.length       
         if (len > 1) {
             return res.status(400).send({ status: false, msg: "Abbreviated college name should be in a single word" });
@@ -71,7 +72,7 @@ const registerCollege = async function (req, res) {
         // requestBody['logoLink'] = createUrl(name)
         let data = await collegeModel.create(requestBody)
         let collegeResponse = await collegeModel.findOne(data).select({name:1,fullName:1,logoLink:1,isDeleted:1})
-        return res.status(200).send({ status: true, message: collegeResponse })
+        return res.status(201).send({ status: true, message: collegeResponse })
     } catch (error) {
         console.log(error);
         return res.status(500).send({ status: false, message: error.message });
