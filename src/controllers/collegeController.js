@@ -31,23 +31,32 @@ const registerCollege = async function (req, res) {
         // Extract body
         const { name, fullName,logoLink, isDeleted } = requestBody
 
-        // valid Body
+        // validation Body
         if (!isValid(name)) {
             return res.status(400).send({ status: false, message: "Please provide valid name" })
+        }
+
+        const isNameAlreadyRegister = await collegeModel.findOne({ name })
+        
+        if (isNameAlreadyRegister) {
+            return res.status(400).send({ status: false, message: `${name} Name already registered` })
         }
 
         if (!isValid(fullName)) {
             return res.status(400).send({ status: false, message: "Please provide valid fullname" })
         }
 
+         const isFullNameAlreadyRegister = await collegeModel.findOne({fullName})
+         if (isFullNameAlreadyRegister){
+             return res.status(400).send({status:false, message:`${fullName}FullName already Register`})
+         }
+
         if (!isValid(logoLink)) {
             return res.status(400).send({ status: false, message: "Please provide valid logoLink" })
         }
 
         if (isDeleted == true) {
-            res
-                .status(400)
-                .send({ status: false, msg: "Cannot input isDeleted as true while registering" });
+            res.status(400).send({ status: false, msg: "Cannot input isDeleted as true while registering" });
             return;
         }
         
@@ -57,48 +66,27 @@ const registerCollege = async function (req, res) {
         if (len > 1) {
             return res.status(400).send({ status: false, msg: "Abbreviated college name should be in a single word" });
         }
-        
-        //valid Name
-        const isNameAlreadyRegister = await collegeModel.findOne({ name })
-        //console.log(isNameAlreadyRegister)
-        if (isNameAlreadyRegister) {
-            return res.status(400).send({ status: false, message: `${name} Name already registered` })
-        }
-
-        //  const isFullNameAlreadyRegister = await collegeModel.findOne({fullName})
-        //  if (isFullNameAlreadyRegister){
-        //      return res.status(400).send({status:false, message:`${fullName}FullName already Register`})
-        //  }
+        //----------------------------validation end------------------------//
+    
         // requestBody['logoLink'] = createUrl(name)
+
         let data = await collegeModel.create(requestBody)
         let collegeResponse = await collegeModel.findOne(data).select({name:1,fullName:1,logoLink:1,isDeleted:1})
         return res.status(201).send({ status: true, message: collegeResponse })
     } catch (error) {
-        console.log(error);
         return res.status(500).send({ status: false, message: error.message });
     }
 
 }
-
-//module.exports = { registerCollege }
-
-
-
 
 const getCollegeDetails = async function (req, res) {
     try {
         const filterQuery = { isDeleted: false }
         const queryParam = req.query
         if (!isValidRequestBody(queryParam)) {
-          return  res.status(400).send({ status: false, msg: "No query param received" });
+            res.status(400).send({ status: false, msg: "No query param received" });
             return;
         }
-
-        // const name1 = req.query.collegeName
-        // if (isValid(name1)) {
-        //     filterQuery['name'] = name1
-        // }
-        
 
         const name1 = req.query.collegeName
         if (!isValid(name1))
@@ -110,6 +98,7 @@ const getCollegeDetails = async function (req, res) {
 
         const college = await collegeModel.findOne(filterQuery)
         //console.log(college)
+        
         if (!college) {
             res.status(400).send({ status: false, msg: "Either college details doesn't exist or Incorrect College name" });
             return;

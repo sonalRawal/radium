@@ -12,14 +12,11 @@ const createInterns = async function (req, res) {
     const requestBody = req.body;
 
     if (!isValidRequestBody(requestBody)) {
-      return res.status(400).send({
-        status: false,
-        msg: "Invalid request parameters. Please provide Intern Details",
-      });
+      return res.status(400).send({status: false,msg: "Invalid request parameters. Please provide Intern Details"});
     }
 
 
-    //Extract Params
+    //Extract body
     const { name, email, mobile, collegeName, isDeleted } = requestBody;
 
 
@@ -35,12 +32,7 @@ const createInterns = async function (req, res) {
     }
 
     if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email.trim())) {
-      res
-        .status(400)
-        .send({
-          status: false,
-          message: `Email should be a valid email address`
-        });
+      res.status(400).send({status: false,message: `Email should be a valid email address`});
       return;
     }
 
@@ -65,10 +57,7 @@ const createInterns = async function (req, res) {
     // if (!/^[0-9]\d{9}$/gi.test(mobile)) {
     if (!/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(mobile.trim())) {
     //if (!/^\+(?:[0-9] ?){10,12}[0-9]$/.test(mobile)) {
-      res.status(400).send({
-        status: false,
-        message: `Mobile should be a valid number`
-      });
+      res.status(400).send({status: false,message: `Mobile should be a valid number` });
       return;
     }
 
