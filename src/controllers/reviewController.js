@@ -1,0 +1,1 @@
+const validate = require("../validation/validator")
