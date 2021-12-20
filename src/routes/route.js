@@ -18,9 +18,9 @@ const middleware = require('../middleware/loginmiddle')
  router.delete("/books/:bookId",middleware ,bookController.deleteBook)
 
 // //review api
-// router.post("/books/:bookId/review",middleware , reviewController.)
-// router.put("/books/:bookId/review/:reviewId",middleware ,reviewController.)
-// router.delete("/books/:bookId/review/:reviewId",middleware,reviewController.)
+ router.post("/books/:bookId/review" , reviewController.createReview)
+ router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
+ router.delete("/books/:bookId/review/:reviewId",reviewController.deleteReview)
 
 
 
