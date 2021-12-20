@@ -8,7 +8,7 @@ const createReview = async function (req, res) {
         const requestBody = req.body;
         const bookId = req.params.bookId
         if (!validate.isValidRequestBody(requestBody)) {
-            res.status(400).send({ status: false, message: 'Invalid parameters!!. Please provide book details' })
+            res.status(400).send({ status: false, message: 'Invalid parameters!!. Please provide review details' })
             return
         }
         const { reviewedBy, review, rating } = requestBody;
@@ -22,9 +22,9 @@ const createReview = async function (req, res) {
             return
         }
         
-        if (!(/^[1-5](\.[1-5][1-5]?)?$/.test(rating))) {
+        if (!validate.validateRating(rating)) {
          //if(!(/^.{1,5}$/.test(rating))){
-            res.status(400).send({ status: false, message: 'rating should be between 0 to 5 characters' })
+            res.status(400).send({ status: false, message: 'rating should be between 1 to 5 integers' })
             return
         }     
         if (!validate.isValid(review)) {
@@ -88,12 +88,13 @@ const updateReview = async function (req, res) {
             return
         }
 
-        // if (book.userId.toString() != userIdFromToken) {
-        //     res.status(401).send({ status: false, message: `Unauthorized access! Owner info doesn't match` });
-        //     return
-        // }
-
         const { reviewedBy, review, rating } = requestBody;
+
+        if (!validate.isValidRequestBody(requestBody)) {
+            res.status(400).send({ status: false, message: 'Please provide paramateres to update perticular review' })
+            return
+            }
+
         updatedReviewData = {}
 
         if (validate.isValid(reviewedBy)) {
@@ -103,13 +104,18 @@ const updateReview = async function (req, res) {
         //     updatedReviewData['reviewedBy'] = "Guest"
         // }
         if (validate.isValid(rating)) {
-            // rating  validation pending   
+            // rating  validation pending
+            if (!validate.validateRating(rating)) {
+                //if(!(/^.{1,5}$/.test(rating))){
+                   res.status(400).send({ status: false, message: 'rating should be between 1 to 5 integers' })
+                   return
+               }else{       
             updatedReviewData['rating'] = rating
+               }
         }
 
-        if (validate.isValid(review)) {
-
-            updatedReviewData['review'] = review.trim()
+        if (validate.isValid(review)){
+           updatedReviewData['review'] = review
         }
         
         const updateReview = await reviewModel.findOneAndUpdate(fetchReview, updatedReviewData, { new: true })
@@ -132,7 +138,6 @@ const deleteReview = async function (req, res) {
         const bookId = req.params.bookId
         const reviewId = req.params.reviewId
 
-
         if (!(validate.isValid(bookId) && validate.isValid(reviewId))) {
             return res.status(400).send({ status: false, msg: "params Id is not valid" })
         }
@@ -140,12 +145,9 @@ const deleteReview = async function (req, res) {
         const review = await reviewModel.findOne({ _id: reviewId, bookId: bookId })
 
         if (!review) {
-            res.status(404).send({ status: false, message: `id don't exist in collection` })
+            res.status(404).send({ status: false, message: ` review not found` })
             return
         }
-
-
-
         let deleteReview = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId, isDeleted: false, deletedAt: null },
             { isDeleted: true, deletedAt: new Date() }, { new: true })
             
@@ -157,7 +159,7 @@ const deleteReview = async function (req, res) {
         let reviewLength = updateBook.length
        // console.log(reviewLength)
         const updateBook1 = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { reviews: reviewLength })
-        res.status(200).send({ status: true, msg: "Review has been deleted", data: deleteReview })
+        res.status(200).send({ status: true, msg: "Review has been deleted successfully" })
         }
 
     } catch (error) {

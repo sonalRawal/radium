@@ -39,7 +39,7 @@ const createBook = async function (req, res) {
             return
         }
 
-        if (!validate.isValidObjectId(userId)) {
+        if (!validate.isValidObjectId(userId.trim())) {
             res.status(400).send({ status: false, message: `${userId} is not a valid user id` })
             return
         }
@@ -47,7 +47,12 @@ const createBook = async function (req, res) {
             res.status(400).send({ status: false, message: 'Book ISBN is required' })
             return
         }
-        const isISBNalreadyUsed = await bookModel.findOne({ ISBN }); // {ISBN: ISBN} object shorthand property
+        if (!validate.validateISBN(ISBN)) {
+            res.status(400).send({ status: false, message: 'plz provide valid Book ISBN' })
+            return
+        }
+
+        const isISBNalreadyUsed = await bookModel.findOne({ ISBN: ISBN.trim() }); // {ISBN: ISBN} object shorthand property
 
         if (isISBNalreadyUsed) {
             res.status(400).send({ status: false, message: `${ISBN} ISBN  is already registered` })
@@ -78,7 +83,7 @@ const createBook = async function (req, res) {
         const bookData = {
             title: title.trim(),
             excerpt: excerpt.trim(),
-            userId: userId.trim(),
+            userId: userId,
             ISBN: ISBN.trim(),
             category: category.trim(),
             subcategory: subcategory.trim().split(',').map(subcat => subcat.trim()),
@@ -129,8 +134,8 @@ const getBooks = async function (req, res) {
             return
         }
 
-
-        res.status(200).send({ status: true, message: 'book list', data: books })
+        const responseData = books.sort((a, b) => a.title.localeCompare(b.title))
+        res.status(200).send({ status: true, message: 'book list', data: responseData })
 
     } catch (error) {
         res.status(500).send({ status: false, message: error.message });
@@ -151,8 +156,8 @@ const bookDetails = async function (req, res) {
         } else {
 
             let fetchReviews = await reviewModel.find({ bookId: reqBookId, isDeleted: false }).select({ bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
-            const { title, excerpt, userId, category, subcategory, releasedAt,isDeleted,deletedAt } = bookData
-            const responseData = { title: title, excerpt: excerpt, userId: userId, category: category, subcategory: subcategory,  releasedAt: releasedAt,isDeleted:isDeleted,deletedAt:deletedAt}
+            const { title, excerpt, userId, category, subcategory, releasedAt, isDeleted, deletedAt } = bookData
+            const responseData = { title: title, excerpt: excerpt, userId: userId, category: category, subcategory: subcategory, releasedAt: releasedAt, isDeleted: isDeleted, deletedAt: deletedAt }
             responseData['reviews'] = fetchReviews.length
             responseData['reviewsData'] = fetchReviews
             if (fetchReviews.length == 0) {
@@ -188,24 +193,15 @@ const updateBook = async function (req, res) {
             return
         }
         if (!validate.isValidRequestBody(requestBody)) {
-            res.status(200).send({ status: true, message: 'No paramateres passed. Book unmodified', data: book })
+            res.status(400).send({ status: false, message: 'Please provide paramateres to update perticular Book' })
             return
         }
-
-        // if (!book) {
-        //     res.status(404).send({ status: false, message: `book not found` })
-        //     return
-        // }
 
         // Extract body
         const { title, excerpt, ISBN, releasedAt } = requestBody;
 
         const updatedBookData = {}
 
-        // if (!validate.isValid(title)) {
-        //     res.status(400).send({ status: false, message: `title is required` })
-        //     return
-        // }
         if (validate.isValid(title)) {
             const isTitleAlreadyUsed = await bookModel.findOne({ title: title.trim() });
 
@@ -213,8 +209,6 @@ const updateBook = async function (req, res) {
                 res.status(400).send({ status: false, message: `title is already registered` })
                 return
             }
-
-
             updatedBookData['title'] = title.trim()
         }
 
@@ -225,14 +219,15 @@ const updateBook = async function (req, res) {
 
 
         if (validate.isValid(ISBN)) {
-
-            const isISBNalreadyUsed = await bookModel.findOne({ ISBN: ISBN.trim() });
-
+            if (!validate.validateISBN(ISBN)) {
+                res.status(400).send({ status: false, message: 'plz provide valid Book ISBN' })
+                return
+            }
+            const isISBNalreadyUsed = await bookModel.findOne({ ISBN: ISBN.trim() })
             if (isISBNalreadyUsed) {
                 res.status(400).send({ status: false, message: ` ISBN  is already registered` })
                 return
             }
-
             updatedBookData['ISBN'] = ISBN.trim()
         }
 
@@ -268,8 +263,8 @@ let deleteBook = async function (req, res) {
             return
         }
 
-        let deletedBook = await bookModel.findOneAndUpdate({_id: bookId,isDeleted:false,deletedAt: null},
-             { isDeleted: true, deletedAt: new Date() }, { new: true })
+        let deletedBook = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false, deletedAt: null },
+            { isDeleted: true, deletedAt: new Date() }, { new: true })
         if (!deletedBook) {
             res.status(404).send({ status: false, msg: "either the book is already deleted or you are not valid user to access this book" })
             return
