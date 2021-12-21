@@ -15,7 +15,7 @@ const createBook = async function (req, res) {
         }
 
         // Extract params
-        const { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt } = requestBody;
+        const { title, excerpt, userId, ISBN,bookCover, category, subcategory, reviews, releasedAt } = requestBody;
 
         // Validation starts
         if (!validate.isValid(title)) {
@@ -58,6 +58,10 @@ const createBook = async function (req, res) {
             res.status(400).send({ status: false, message: `${ISBN} ISBN  is already registered` })
             return
         }
+        if (!validate.isValid(bookCover)) {
+            res.status(400).send({ status: false, message: 'bookCover is required' })
+            return
+        }
         if (!validate.isValid(category)) {
             res.status(400).send({ status: false, message: 'book category is required' })
             return
@@ -81,11 +85,12 @@ const createBook = async function (req, res) {
         // Validation ends
 
         const bookData = {
-            title: title.trim(),
-            excerpt: excerpt.trim(),
+            title: title,
+            excerpt: excerpt,
             userId: userId,
-            ISBN: ISBN.trim(),
-            category: category.trim(),
+            ISBN: ISBN,
+            bookCover : bookCover,
+            category: category,
             subcategory: subcategory.trim().split(',').map(subcat => subcat.trim()),
             reviews: reviews,
             releasedAt: releasedAt

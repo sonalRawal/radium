@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const aws = require('../aws')
 const bookController= require('../controllers/bookController')
 const reviewController= require('../controllers/reviewController')
 const userController= require('../controllers/userController')
@@ -11,7 +11,7 @@ const middleware = require('../middleware/loginmiddle')
  router.post("/login", userController.loginUser)
 
 // //book api
- router.post("/books",middleware ,bookController.createBook)
+ router.post("/books" ,middleware,bookController.createBook)
  router.get("/books",middleware, bookController.getBooks)
  router.get("/books/:bookId",middleware ,bookController.bookDetails)
  router.put("/books/:bookId",middleware,bookController.updateBook)
@@ -22,6 +22,8 @@ const middleware = require('../middleware/loginmiddle')
  router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
  router.delete("/books/:bookId/review/:reviewId",reviewController.deleteReview)
 
+ //awsApi 
+ router.post("/write-file-aws",aws.createUrl)
 
 
 
