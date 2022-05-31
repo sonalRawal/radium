@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <% data.forEach(function(ele){   %>
+        <form method="post" action="/update/<%= ele.objectID %>" autocomplete="off">
+            <div class="form-group">
+                <label><b>objectID :</b></label>
+                <input type="text" name="objectID" class="form-control" value="<%= ele.objectID %>">
+            </div>
+             <div class="form-group">
+                <label><b>isHighlight :</b></label>
+                <input type="text" name="isHighlight" class="form-control" value="<%= ele.isHighlight %>">
+            </div>
+            <div class="form-group">
+                <label><b>accessionNumber :</b></label>
+                <input type="text" name="accessionNumber" class="form-control" value="<%= ele.accessionNumber %>">
+            </div>
+            <div class="form-group">
+                <label><b>accessionYear :</b></label>
+                <input type="text" name="accessionYear" class="form-control" value="<%= ele.accessionYear %>">
+            </div>
+            <div class="form-group">
+                <label><b>isPublicDomain :</b></label>
+                <input type="text" name="isPublicDomain" class="form-control" value="<%= ele.isPublicDomain %>">
+            </div>
+            
+             <input type="submit" name="update" value="Update" class="btn btn-success">
+        </form>
+        <% }); %>
+    </div>
+    
+</body>
+</html>
